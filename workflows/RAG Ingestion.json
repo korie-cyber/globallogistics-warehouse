@@ -1,0 +1,162 @@
+{
+  "name": "RAG Ingestion",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "efccaa23-4616-437f-876e-b997b535463c",
+      "name": "Start Button"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  {\n    json: {\n      item_name: \"X-1000 Power Processor\",\n      content: \"TECHNICAL SPECIFICATIONS: Clock Speed: 3.5GHz (Base) / 5.2GHz (Boost). TDP: 120W. Socket: AM5. CAUTION: Exceeding 95°C will trigger thermal throttling. WARRANTY: 3-year limited warranty.\",\n      metadata: { category: \"Electronics\", version: \"1.2\" }\n    }\n  },\n  {\n    json: {\n      item_name: \"G-Pro Graphics Card\",\n      content: \"TROUBLESHOOTING: If fans do not spin on startup, ensure both 8-pin power connectors are seated. Zero-RPM mode is active until 60°C. FIRMWARE: Use v2.1 for AI acceleration stability.\",\n      metadata: { category: \"Electronics\", version: \"2.1\" }\n    }\n  },\n  {\n    json: {\n      item_name: \"Industrial Grade Sensor\",\n      content: \"CALIBRATION STEPS: 1. Power on with 24V DC. 2. Press Zero button for 5 seconds. 3. Adjust trim-pot until output is 4.00mA. DATA INTERFACE: RS-485 Modbus RTU.\",\n      metadata: { category: \"Components\", version: \"1.0\" }\n    }\n  },\n  {\n    json: {\n      item_name: \"High-Speed Cooling Fan\",\n      content: \"MAINTENANCE: Clean blades every 6 months to maintain 2500 RPM efficiency. NOISE SPECS: 18dB at 40%, 32dB at 100%. MTBF: 50,000 hours.\",\n      metadata: { category: \"Components\", version: \"3.0\" }\n    }\n  },\n  {\n    json: {\n      item_name: \"Secure Cloud Hub\",\n      content: \"SECURITY FEATURES: FIPS 140-2 Level 3 certified. Dedicated TPM 2.0 module. Remote wipe capable. INITIAL SETUP: Default IP 192.168.1.254.\",\n      metadata: { category: \"Networking\", version: \"4.2\" }\n    }\n  }\n]"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "850d0e5c-bc2f-4485-8352-f64f49e5ec44",
+      "name": "Manual data loader"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "product_manuals",
+          "mode": "list",
+          "cachedResultName": "product_manuals"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        448,
+        0
+      ],
+      "id": "06b8af05-e739-4639-982b-51b104ed4599",
+      "name": "Inserts embeddings into product_manuals",
+      "credentials": {
+        "supabaseApi": {
+          "id": "CGRP6Vkk6Bfchwto",
+          "name": "Supabase-coffee-chatbot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "text-embedding-ada-002",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        464,
+        224
+      ],
+      "id": "251e73b3-b76a-4f08-9a84-dccb0319eb5c",
+      "name": "text-embedding-ada-002",
+      "credentials": {
+        "openAiApi": {
+          "id": "Lt1VOba4klXm6fxv",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.content }}",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "Metadata",
+                "value": "={{ $json.metadata }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        592,
+        224
+      ],
+      "id": "e9c1e774-38fc-4a49-ad4d-1defdbca6c21",
+      "name": "Loads content field as document"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Start Button": {
+      "main": [
+        [
+          {
+            "node": "Manual data loader",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual data loader": {
+      "main": [
+        [
+          {
+            "node": "Inserts embeddings into product_manuals",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "text-embedding-ada-002": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Inserts embeddings into product_manuals",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loads content field as document": {
+      "ai_document": [
+        [
+          {
+            "node": "Inserts embeddings into product_manuals",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "NgQsjZ9Ar7RnzGMh",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "d2417156-49ae-4534-b5d7-ea3a25f57277",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f9db3517528b8a4589bb33d3723c09f0a455ddd51e54ef22fb317725cf355c51"
+  },
+  "id": "yYWuWSoKqoyjcuyf",
+  "tags": []
+}

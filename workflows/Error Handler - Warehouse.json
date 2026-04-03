@@ -1,0 +1,112 @@
+{
+  "name": "Error Handler - Warehouse",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "f7e58805-6e9e-4dbe-9059-2de29ac1a889",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://placeholder.com/error",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"status\": \"error\",\n  \"message\": \"{{ $('Format error message').item.json.message }}\",\n  \"workflow\": \"{{ $('Format error message').item.json.workflow }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        416,
+        0
+      ],
+      "id": "1b0325be-87eb-4343-87ee-6fe13c099fff",
+      "name": "Notify Frontend"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3d6d1e5e-32f5-47dc-9682-97ff5e5930e2",
+              "name": "status",
+              "value": "error",
+              "type": "string"
+            },
+            {
+              "id": "c0995328-5799-4a16-9075-2247b56837a7",
+              "name": "message",
+              "value": "={{ $json.execution.error.message }}",
+              "type": "string"
+            },
+            {
+              "id": "a90e26ed-6281-4b0e-8c7c-3b63382d9a45",
+              "name": "workflow",
+              "value": "={{ $json.workflow.name }}",
+              "type": "string"
+            },
+            {
+              "id": "64b3077c-21a1-4f00-a648-0138aa59737f",
+              "name": "timestamp",
+              "value": "={{ new Date().toLocaleString('en-GB', { timeZone: 'Europe/Sofia', hour12: false }) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "ee0a4f1e-6dfa-499b-ac33-43bc6ed48ede",
+      "name": "Format error message"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Format error message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format error message": {
+      "main": [
+        [
+          {
+            "node": "Notify Frontend",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "563da1f3-2572-4233-a41a-2b0c7eb53e65",
+  "meta": {
+    "instanceId": "f9db3517528b8a4589bb33d3723c09f0a455ddd51e54ef22fb317725cf355c51"
+  },
+  "id": "NgQsjZ9Ar7RnzGMh",
+  "tags": []
+}
