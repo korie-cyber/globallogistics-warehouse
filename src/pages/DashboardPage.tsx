@@ -5,10 +5,13 @@ import { PageHeader } from "@/components/PageHeader";
 import { toast } from "sonner";
 
 interface HealthItem {
+  id: number;
   item_name: string;
   category: string;
   stock_level: number;
   reorder_point: number;
+  price: number;
+  supplier_email: string;
 }
 
 export default function DashboardPage() {
@@ -19,8 +22,8 @@ export default function DashboardPage() {
     setLoading(true);
     try {
       const data = await warehouseApi({ action: "health_check" });
-      const lowItems = data.low_stock_items ?? data.items ?? [];
-      setItems(lowItems);
+      const list: HealthItem[] = Array.isArray(data) ? data : data.low_stock_items ?? data.items ?? [];
+      setItems(list);
     } catch {
       toast.error("Failed to run health check. Please try again.");
     } finally {
