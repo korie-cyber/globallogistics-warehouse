@@ -21,7 +21,11 @@ export default function DashboardPage() {
   const runHealthCheck = async () => {
     setLoading(true);
     try {
-      const data = await warehouseApi({ action: "health_check" });
+      let data = await warehouseApi({ action: "health_check" });
+      // n8n may wrap the response in an extra array
+      if (Array.isArray(data) && data.length === 1 && Array.isArray(data[0])) {
+        data = data[0];
+      }
       const list: HealthItem[] = Array.isArray(data) ? data : data.low_stock_items ?? data.items ?? [];
       setItems(list);
     } catch {
