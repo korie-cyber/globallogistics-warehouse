@@ -16,9 +16,12 @@ A full-stack AI-powered warehouse management system built for GlobalLogistics Co
 - Error handling workflow with Bulgarian timezone timestamps
 
 ## Project Structure
-/workflows         - n8n workflow JSON exports
-/database          - SQL scripts for all tables
-/src               - Frontend React application
+```
+/workflows          - n8n workflow JSON exports
+/database           - SQL scripts for all tables
+/src                - Frontend React application
+README.md           - Project documentation
+```
 
 ## Database Setup
 Run the SQL scripts in this order in Supabase:
