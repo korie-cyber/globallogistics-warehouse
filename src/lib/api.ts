@@ -7,5 +7,10 @@ export async function warehouseApi(body: Record<string, unknown>) {
     body: JSON.stringify(body),
   });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return res.json();
+  let data = await res.json();
+  // n8n often wraps responses in a single-element array — unwrap it
+  while (Array.isArray(data) && data.length === 1 && !Array.isArray(data[0])) {
+    data = data[0];
+  }
+  return data;
 }
