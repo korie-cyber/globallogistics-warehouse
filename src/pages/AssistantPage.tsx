@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { Send, Bot } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 import { warehouseApi } from "@/lib/api";
 import { toast } from "sonner";
 
@@ -100,7 +101,9 @@ export default function AssistantPage() {
                   : "bg-muted border border-border text-foreground"
               }`}
             >
-              {msg.content}
+              <div className="prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-ol:my-1 prose-li:my-0.5">
+                <ReactMarkdown>{msg.content}</ReactMarkdown>
+              </div>
             </div>
           </div>
         ))}
