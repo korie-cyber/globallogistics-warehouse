@@ -5,10 +5,13 @@ import { PageHeader } from "@/components/PageHeader";
 import { toast } from "sonner";
 
 interface HealthItem {
+  id: number;
   item_name: string;
   category: string;
   stock_level: number;
   reorder_point: number;
+  price: number;
+  supplier_email: string;
 }
 
 export default function DashboardPage() {
@@ -19,8 +22,8 @@ export default function DashboardPage() {
     setLoading(true);
     try {
       const data = await warehouseApi({ action: "health_check" });
-      const lowItems = data.low_stock_items ?? data.items ?? [];
-      setItems(lowItems);
+      const list: HealthItem[] = Array.isArray(data) ? data : data.low_stock_items ?? data.items ?? [];
+      setItems(list);
     } catch {
       toast.error("Failed to run health check. Please try again.");
     } finally {
@@ -79,24 +82,28 @@ export default function DashboardPage() {
               <tr className="border-b border-border bg-muted/30">
                 <th className="text-left px-5 py-3 font-medium text-muted-foreground">Item Name</th>
                 <th className="text-left px-5 py-3 font-medium text-muted-foreground">Category</th>
+                <th className="text-right px-5 py-3 font-medium text-muted-foreground">Price</th>
                 <th className="text-right px-5 py-3 font-medium text-muted-foreground">Stock Level</th>
                 <th className="text-right px-5 py-3 font-medium text-muted-foreground">Reorder Point</th>
                 <th className="text-right px-5 py-3 font-medium text-muted-foreground">Shortage</th>
+                <th className="text-left px-5 py-3 font-medium text-muted-foreground">Supplier</th>
               </tr>
             </thead>
             <tbody>
-              {items.map((item, i) => (
+              {items.map((item) => (
                 <tr
-                  key={i}
+                  key={item.id}
                   className="border-b border-border last:border-0 bg-warning/5 hover:bg-warning/10 transition-colors"
                 >
                   <td className="px-5 py-3 font-medium">{item.item_name}</td>
                   <td className="px-5 py-3 text-muted-foreground">{item.category}</td>
+                  <td className="px-5 py-3 text-right font-mono">${item.price.toFixed(2)}</td>
                   <td className="px-5 py-3 text-right text-warning font-mono">{item.stock_level}</td>
                   <td className="px-5 py-3 text-right font-mono">{item.reorder_point}</td>
                   <td className="px-5 py-3 text-right text-warning font-mono font-medium">
                     {item.reorder_point - item.stock_level}
                   </td>
+                  <td className="px-5 py-3 text-muted-foreground text-xs">{item.supplier_email}</td>
                 </tr>
               ))}
             </tbody>
