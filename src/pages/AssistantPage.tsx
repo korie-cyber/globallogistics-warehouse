@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { Send, Bot } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 import { warehouseApi } from "@/lib/api";
 import { toast } from "sonner";
 
